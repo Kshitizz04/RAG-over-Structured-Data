@@ -1,5 +1,3 @@
-# app.py
-
 from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
 from ingestion import load_and_parse_file
