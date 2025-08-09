@@ -1,18 +1,14 @@
 # retrieval.py
 
-import os
 import pandas as pd
 import faiss
 import numpy as np
-from openai import OpenAI
 from typing import List
 from utils import format_units
 from llm_engine import ask_llm
+from sentence_transformers import SentenceTransformer
 
-from dotenv import load_dotenv
-load_dotenv()
-
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+model = SentenceTransformer("all-MiniLM-L6-v2")
 
 # Global variables to hold vectors and data
 VECTOR_STORE = None
@@ -25,11 +21,7 @@ def row_to_text(row: pd.Series) -> str:
 
 # 2. Embed a list of texts
 def embed_texts(texts: List[str]) -> List[List[float]]:
-    response = client.embeddings.create(
-        model="text-embedding-3-small",
-        input=texts
-    )
-    return [e.embedding for e in response.data]
+    return model.encode(texts).tolist()
 
 # 3. Create the vector store from the uploaded DataFrame
 async def index_dataframe(df: pd.DataFrame):
@@ -64,7 +56,6 @@ def retrieve_similar_chunks(query: str, k=3) -> List[str]:
 async def query_llm_with_context(question: str, df: pd.DataFrame) -> str:
     # Index the data first
     await index_dataframe(df)
-
     relevant_chunks = retrieve_similar_chunks(question)
 
     prompt = f"""

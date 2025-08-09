@@ -26,6 +26,6 @@ async def upload_file(file: UploadFile = File(...)):
 async def ask_question(question: str = Form(...)):
     if CURRENT_DATAFRAME is None:
         return {"error": "No file uploaded yet."}
-    
+
     answer = await query_llm_with_context(question, CURRENT_DATAFRAME)
     return {"answer": answer}
