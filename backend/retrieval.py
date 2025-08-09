@@ -70,3 +70,21 @@ Question: {question}
 
     response = ask_llm(prompt)
     return format_units(response)
+
+async def extract_chart_details(question: str, df: pd.DataFrame):
+    
+    columns = ", ".join(df.columns)
+    prompt = (
+        f"You are an AI assistant. Given the following table columns: {columns}\n"
+        f"Extract the chart type (bar, line, scatter), x column, and y column from this question.\n"
+        f"Reply with JSON only, no explanation or extra text. "
+        f"If you cannot extract, reply exactly: {{\"chart_type\": null, \"x_col\": null, \"y_col\": null}}\n\n"
+        f"Question: {question}"
+    )
+    import json
+    response = ask_llm(prompt)
+    try:
+        details = json.loads(response)
+        return details.get("chart_type"), details.get("x_col"), details.get("y_col")
+    except Exception:
+        return None, None, None
