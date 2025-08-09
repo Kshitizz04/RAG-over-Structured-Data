@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+.material-symbols-outlined {
+    font-size: inherit; 
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
